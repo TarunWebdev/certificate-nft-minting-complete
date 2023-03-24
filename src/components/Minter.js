@@ -54,7 +54,7 @@ const Minter = () => {
   const getMintingMetadata = async () => {
     const imageIPFS = getImageIPFS()
     try {
-      const res = await pinataWrapper(name,eventName,imageIPFS)
+      const res = await pinataWrapper(name,"H7D by Tezos India",imageIPFS)
       return res.Ipfs;
     } catch (error) 
     {
@@ -83,6 +83,9 @@ const Minter = () => {
     setLoading(false);
   };
 
+  useEffect(() => {
+    setEventName("H7D by Tezos India")
+  }, []);
 
   return (
     <FormContainer autocomplete="off" onSubmit={handleMint}>
@@ -95,19 +98,6 @@ const Minter = () => {
           value={name}
           onChange={handleNameChange}
           placeholder="Enter your name"
-          required
-        />
-      </InputWrapper>
-      <InputWrapper>
-        <Label htmlFor="eventName">Event Name:</Label>
-        <Input
-          type="text"
-          id="eventName"
-          name="eventName"
-          autocomplete="off"
-          value={eventName}
-          onChange={handleEventNameChange}
-          placeholder="Enter the event name"
           required
         />
       </InputWrapper>
