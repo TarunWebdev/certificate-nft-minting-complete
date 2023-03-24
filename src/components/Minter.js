@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import certi from '../img/certi.png'
 import html2canvas from "html2canvas";
 import { pinataWrapper, sendFileToIPFS } from '../utils/pinata';
