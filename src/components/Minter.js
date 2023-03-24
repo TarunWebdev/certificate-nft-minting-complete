@@ -17,10 +17,6 @@ const Minter = () => {
     setName(event.target.value);
   };
 
-  const handleEventNameChange = (event) => {
-    setEventName(event.target.value);
-  };
-
   // TODO 7.1 - add a referance point to the canvas
   const printRef = React.useRef();
 
