@@ -1,4 +1,4 @@
-// TODO 6 - Call buy_ticket entrypoint in the Lottery contract
+// TODO 6 - Call mint entrypoint in the NFT contract
 import { tezos } from "./tezos";
 import {char2Bytes} from "@taquito/utils"
 

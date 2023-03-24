@@ -1,81 +1,18 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import certi from '../img/certi.png'
-import { exportComponentAsPNG } from "react-component-export-image";
 import html2canvas from "html2canvas";
-import * as ReactDOM from 'react-dom';
 import { pinataWrapper, sendFileToIPFS } from '../utils/pinata';
 import { mintOperation } from '../utils/operation';
-// import { sendFileToIPFS } from '../utils/pinata';
-
-const FormContainer = styled.form`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  max-width: 500px;
-  margin: 0 auto;
-`;
-
-const InputWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  align-items: center;
-  margin: 20px;
-  position: relative;
-`;
-
-const Label = styled.label`
-  margin-bottom: 5px;
-  font-weight: bold;
-  width: 220px;
-  text-transform: uppercase;
-`;
-
-const Input = styled.input`
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 2px solid #ccc;
-  border-radius: 5px;
-  width: 100%;
-  box-sizing: border-box;
-  font-size: 1rem;
-  transition: all 0.3s;
-
-  &:focus {
-    outline: none;
-    border-color: #4CAF50;
-    box-shadow: 0 0 5px #4CAF50;
-  }
-
-  @media (max-width: 600px) {
-    width: calc(100% - 20px);
-  }
-`;
-
-const Button = styled.button`
-  padding: 10px 20px;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: all 0.3s;
-
-  &:hover {
-    background-color: #3E8E41;
-  }
-
-  &:active {
-    background-color: #3E8E41;
-    transform: scale(0.95);
-  }
-`;
+import { FormContainer , InputWrapper , Label ,Input ,Button} from './FormStyle';
 
 
-const Form = () => {
+const Minter = () => {
+
   const [name, setName] = useState('');
   const [eventName, setEventName] = useState('');
+  const [loading, setLoading] = useState(false);
+
 
   const handleNameChange = (event) => {
     setName(event.target.value);
@@ -92,16 +29,22 @@ const Form = () => {
     return canvas;
   }
 
-  const createMetadata = async () => {
+  const getImageData = async (canvas) => {
+    const imageBlob = await fetch(canvas.toDataURL("image/png")).then((res) => res.blob());
+    return imageBlob;
+  }
+  const mintingOperation = async () => {
 
     const canvas = await captureElement(printRef.current);
-    const blob = await fetch(canvas.toDataURL("image/png")).then((res) => res.blob());
+    const blob = await getImageData(canvas);
     
     const res = await sendFileToIPFS(blob)
 
     const res2 = await pinataWrapper(name,eventName,res.Ipfs)
 
     const mint = await mintOperation(res2.Ipfs)
+
+
     const metadata = {
       name,
       eventName,
@@ -112,20 +55,22 @@ const Form = () => {
     return metadata;
   };
 
-  const handleSubmit = async (event) => {
+  const handleMint = async (event) => {
     event.preventDefault();
     try{
-      const metadata = await createMetadata();
+      setLoading(true);
+      await mintingOperation();
+      alert("Mint succesful!");
     }
     catch(error){
       console.log(error);
     }
-    // Do whatever you want with metadata here
+    setLoading(false);
   };
 
 
   return (
-    <FormContainer onSubmit={handleSubmit}>
+    <FormContainer autocomplete="off" onSubmit={handleMint}>
       <InputWrapper>
         <Label htmlFor="name">Name:</Label>
         <Input
@@ -144,6 +89,7 @@ const Form = () => {
           type="text"
           id="eventName"
           name="eventName"
+          autocomplete="off"
           value={eventName}
           onChange={handleEventNameChange}
           placeholder="Enter the event name"
@@ -160,9 +106,11 @@ const Form = () => {
         </div>
         <br />
 
-      <Button type="submit">Submit</Button>
+      <Button type="submit">
+         {loading ? "Loading..." : "Mint NFT"}
+      </Button>
     </FormContainer>
   );
   }
 
-  export default Form;
+  export default Minter;
