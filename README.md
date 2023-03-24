@@ -11,5 +11,6 @@ In the project directory, you can run:
 ## NFT Contracts
 
 Limanet contract : KT1UmCb8a84ssmjaEXp7Zq4AiKrfTXTu2Z8b
+
 RPC URL : https://limanet.smartpy.io
 
